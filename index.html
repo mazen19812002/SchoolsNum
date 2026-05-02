@@ -171,6 +171,36 @@
         }
 
         /* إخفاء أسهم الأرقام */
+        input[type="number"]::-webkit-inner-spin-button, 
+        input[type="number"]::-webkit-outer-spin-button { 
+            -webkit-appearance: none; 
+            margin: 0; 
+        }
+
+        /* قسم التوقيعات */
+        .signatures {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 40px;
+            padding: 0 50px;
+            font-size: 28px; /* تم تكبير الخط بشكل ملحوظ */
+            font-weight: 900; /* خط عريض جداً */
+            color: #0369a1;
+            text-shadow: 1px 1px 2px rgba(255,255,255,0.8);
+        }
+
+        .signatures div {
+            flex: 1;
+        }
+
+        .signatures .right-sig {
+            text-align: right;
+        }
+
+        .signatures .left-sig {
+            text-align: left;
+        }
+
         /* منطقة الأزرار والملاحظة */
         .actions-container {
             margin-top: 30px;
@@ -356,8 +386,10 @@
             }
 
             .signatures {
-                margin-top: 20px;
-                font-size: 16px;
+                margin-top: 30px;
+                font-size: 24px !important; /* تكبير التوقيعات أيضاً في صفحة الطباعة */
+                font-weight: 900 !important;
+                color: #000;
             }
             
             .row-postgrad, .row-perc {
@@ -427,8 +459,8 @@
         </div>
 
         <div class="signatures">
-            <div>مسئول التدريب</div>
-            <div>يعتمد ،،، مدير المدرسة</div>
+            <div class="right-sig">مسئول التدريب</div>
+            <div class="left-sig">يعتمد ،،، مدير المدرسة</div>
         </div>
 
         <div class="actions-container">
