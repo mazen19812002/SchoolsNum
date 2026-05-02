@@ -207,19 +207,6 @@
             text-align: center;
         }
 
-        .actions-note {
-            color: #ef4444; /* لون أحمر للتنبيه */
-            font-size: 18px;
-            font-weight: bold;
-            margin-bottom: 15px;
-            text-shadow: 1px 1px 2px rgba(255,255,255,0.8);
-            background: rgba(255, 255, 255, 0.7);
-            display: inline-block;
-            padding: 8px 20px;
-            border-radius: 10px;
-            border: 1px dashed #ef4444;
-        }
-
         .actions {
             display: flex;
             justify-content: center;
@@ -464,15 +451,9 @@
         </div>
 
         <div class="actions-container">
-            <div class="actions-note">
-                ⚠️ ملحوظة: يرجى الضغط على زر (الطباعة أو حفظ PDF) أولاً قبل الضغط على (حفظ) لتتمكن من طباعة الصفحة بنجاح.
-            </div>
             <div class="actions">
-                <button class="btn-print" onclick="window.print()">
-                    🖨️ طباعة أو حفظ PDF
-                </button>
-                <button class="btn-save" onclick="saveData()">
-                    💾 حفظ
+                <button class="btn-save" onclick="saveAndPrint()">
+                    💾 حفظ وطباعة PDF
                 </button>
                 <button class="btn-clear" onclick="clearForm()">
                     🗑️ تفريغ البيانات
@@ -663,18 +644,21 @@
             document.getElementById('customModal').style.display = 'none';
         }
 
-        // --- دالة الحفظ في شيت جوجل ---
+        // --- دالة الحفظ في شيت جوجل والطباعة ---
         // تم ربط الرابط بنجاح
         const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx0r2w4MSn1KX63rbYnACCFZVTLufhAIIXb3tPQkkt-LO0g1dO3CeaytfZo6beZaiYi/exec";
 
-        async function saveData() {
+        async function saveAndPrint() {
             const schoolName = document.getElementById('schoolName').value.trim();
             if(!schoolName) {
                 showModal("يرجى اختيار أو كتابة اسم المدرسة / الجهة أولاً.");
                 return;
             }
 
-            // تجميع البيانات
+            // 1. فتح نافذة الطباعة أولاً لتحميل الـ PDF
+            window.print();
+
+            // 2. تجميع البيانات
             const rows = document.querySelectorAll("#surveyTable tbody tr");
             let dataPayload = [];
 
@@ -695,20 +679,25 @@
                 dataPayload.push(rowData);
             });
 
-            document.getElementById('modalCloseBtn').style.display = 'none';
-            showModal("⏳ جاري الحفظ...");
+            // 3. تأخير بسيط لإرسال البيانات حتى تعمل نافذة الطباعة بسلاسة
+            setTimeout(async () => {
+                document.getElementById('modalCloseBtn').style.display = 'none';
+                showModal("⏳ جاري الحفظ في شيت جوجل...");
 
-            try {
-                const response = await fetch(GOOGLE_SCRIPT_URL, {
-                    method: "POST",
-                    body: JSON.stringify(dataPayload)
-                });
-                
-                showModal("✅ تم الحفظ بنجاح!");
-            } catch (error) {
-                console.error(error);
-                showModal("❌ حدث خطأ! تأكد من وضع الرابط الصحيح في الكود، وتأكد من اتصالك بالإنترنت.");
-            }
+                try {
+                    const response = await fetch(GOOGLE_SCRIPT_URL, {
+                        method: "POST",
+                        body: JSON.stringify(dataPayload)
+                    });
+                    
+                    document.getElementById('modalCloseBtn').style.display = 'inline-flex';
+                    showModal("✅ تم الحفظ بنجاح!");
+                } catch (error) {
+                    console.error(error);
+                    document.getElementById('modalCloseBtn').style.display = 'inline-flex';
+                    showModal("❌ حدث خطأ! تأكد من اتصالك بالإنترنت.");
+                }
+            }, 800);
         }
 
         // تشغيل بناء الجدول عند تحميل الصفحة
