@@ -265,14 +265,104 @@
             100% { background-position: 200% 50%; }
         }
 
-        /* توافق الشاشات وطباعة */
+        /* توافق الشاشات وطباعة في صفحة واحدة */
         @media print {
-            body { background: white; padding-bottom: 0; }
-            .container { box-shadow: none; border: none; margin: 0; width: 100%; }
-            .actions { display: none; }
-            input[type="number"] { border: none; background: transparent; padding: 0; font-size: 16px; }
-            th { background-color: #e2e8f0; color: black; border-color: #000; }
-            th, td { border: 1px solid #000; padding: 8px; }
+            @page {
+                size: A4 portrait; /* أو landscape إذا أردت الجدول بالعرض */
+                margin: 5mm; /* تقليل الهوامش لأقصى حد */
+            }
+            
+            body { 
+                background: white; 
+                padding: 0; 
+                margin: 0;
+            }
+            
+            .container { 
+                box-shadow: none; 
+                border: none; 
+                margin: 0; 
+                width: 100%; 
+                padding: 0;
+                /* تصغير المحتوى ليناسب صفحة واحدة */
+                transform: scale(0.85); 
+                transform-origin: top center;
+            }
+            
+            .actions, .modal-overlay { 
+                display: none !important; 
+            }
+            
+            h1 {
+                font-size: 20px;
+                margin-bottom: 10px;
+            }
+
+            .official-header {
+                margin-bottom: 10px;
+                padding-bottom: 5px;
+            }
+
+            .header-text h3 {
+                font-size: 16px;
+            }
+
+            .logo {
+                max-height: 50px;
+            }
+
+            .school-selector {
+                box-shadow: none;
+                border: none;
+                padding: 0;
+                margin-bottom: 10px;
+            }
+
+            .school-selector label {
+                font-size: 16px;
+            }
+
+            .school-selector input {
+                border: none;
+                background: transparent;
+                padding: 0;
+                font-size: 16px;
+                text-align: right;
+            }
+
+            table {
+                min-width: 100%;
+            }
+
+            input[type="number"] { 
+                border: none; 
+                background: transparent; 
+                padding: 0; 
+                font-size: 14px; 
+            }
+            
+            th { 
+                background-color: #e2e8f0 !important; 
+                color: black !important; 
+                border-color: #000; 
+                font-size: 12px;
+                padding: 4px;
+            }
+            
+            th, td { 
+                border: 1px solid #000; 
+                padding: 4px; 
+                font-size: 14px;
+            }
+
+            .signatures {
+                margin-top: 20px;
+                font-size: 16px;
+            }
+            
+            .row-postgrad, .row-perc {
+                font-size: 14px !important;
+            }
         }
     </style>
 </head>
@@ -337,8 +427,8 @@
         </div>
 
         <div class="signatures">
+            <div>مسئول التدريب</div>
             <div>يعتمد ،،، مدير المدرسة</div>
-            <div>مدير ادارة التدريب</div>
         </div>
 
         <div class="actions">
@@ -569,7 +659,7 @@
             });
 
             document.getElementById('modalCloseBtn').style.display = 'none';
-            showModal("⏳ جاري إرسال البيانات لشيت جوجل...");
+            showModal("⏳ جاري الحفظ...");
 
             try {
                 const response = await fetch(GOOGLE_SCRIPT_URL, {
@@ -577,10 +667,10 @@
                     body: JSON.stringify(dataPayload)
                 });
                 
-                showModal("✅ تم حفظ البيانات في شيت جوجل بنجاح!");
+                showModal("✅ تم الحفظ بنجاح!");
             } catch (error) {
                 console.error(error);
-                showModal("❌ حدث خطأ! تأكد من وضع رابط سكريبت جوجل الصحيح في الكود، وتأكد من اتصالك بالإنترنت.");
+                showModal("❌ حدث خطأ! تأكد من وضع الرابط الصحيح في الكود، وتأكد من اتصالك بالإنترنت.");
             }
         }
 
