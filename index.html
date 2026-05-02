@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>جدول حصر الكوادر الحاصلة على الدراسات العليا</title>
+    <style>
+        /* الخطوط الأساسية والتهيئة */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #e0f2fe; /* خلفية زرقاء فاتحة */
+            background-image: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            color: #0f172a;
+        }
+
+        /* حاوية المحتوى الرئيسية - زجاجية شفافة */
+        .container {
+            flex: 1;
+            width: 98%;
+            max-width: 1400px;
+            margin: 20px auto;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            overflow-x: auto;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 28px;
+            font-weight: bold;
+            color: #0369a1;
+            margin-bottom: 20px;
+            text-shadow: 1px 1px 2px rgba(255,255,255,0.8);
+        }
+
+        /* تنسيق الترويسة الرسمية مع الشعارات */
+        .official-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #bae6fd;
+        }
+
+        .header-text {
+            text-align: center;
+            color: #0369a1;
+            flex: 1;
+        }
+
+        .header-text h3 {
+            font-size: 22px;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .logo {
+            max-height: 80px;
+            width: auto;
+            object-fit: contain;
+        }
+
+        /* تنسيق الجدول */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            min-width: 1000px; /* لضمان عدم تداخل الأعمدة في الشاشات الصغيرة */
+        }
+
+        th, td {
+            border: 1px solid #7dd3fc;
+            padding: 12px;
+            text-align: center;
+            vertical-align: middle;
+            font-size: 18px;
+        }
+
+        th {
+            background-color: #38bdf8;
+            color: #fff;
+            font-weight: bold;
+            font-size: 16px; /* عناوين رفيعة ومقروءة */
+            white-space: normal;
+            line-height: 1.4;
+        }
+
+        /* صف الإجمالي العام */
+        .total-row {
+            background-color: #f0f9ff;
+            font-weight: bold;
+            color: #0284c7;
+        }
+
+        /* تنسيق قائمة اختيار المدرسة */
+        .school-selector {
+            margin-bottom: 20px;
+            text-align: right;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 15px 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            border: 1px solid #bae6fd;
+        }
+
+        .school-selector label {
+            font-size: 20px;
+            font-weight: bold;
+            color: #0369a1;
+            white-space: nowrap;
+        }
+
+        .school-selector input {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #bae6fd;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            background-color: #f0f9ff;
+            color: #0f172a;
+            transition: all 0.3s ease;
+        }
+
+        .school-selector input:focus {
+            outline: none;
+            border-color: #0ea5e9;
+            background-color: #fff;
+            box-shadow: 0 0 8px rgba(14, 165, 233, 0.4);
+        }
+
+        /* حقول الإدخال */
+        input[type="number"] {
+            width: 100%;
+            min-width: 60px;
+            padding: 10px;
+            border: 2px solid #bae6fd;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            background-color: rgba(255, 255, 255, 0.7);
+            transition: all 0.3s ease;
+        }
+
+        input[type="number"]:focus {
+            outline: none;
+            border-color: #0ea5e9;
+            background-color: #fff;
+            box-shadow: 0 0 8px rgba(14, 165, 233, 0.4);
+            transform: scale(1.05);
+        }
+
+        /* إخفاء أسهم الأرقام */
+        input[type="number"]::-webkit-inner-spin-button, 
+        input[type="number"]::-webkit-outer-spin-button { 
+            -webkit-appearance: none; 
+            margin: 0; 
+        }
+
+        /* قسم التوقيعات */
+        .signatures {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 40px;
+            padding: 0 50px;
+            font-size: 20px;
+            font-weight: bold;
+            color: #0369a1;
+        }
+
+        /* منطقة الأزرار */
+        .actions {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        /* تصميم الأزرار (متدرجة ومتحركة) */
+        button {
+            padding: 12px 30px;
+            font-size: 20px;
+            font-weight: bold;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            background-size: 200% auto;
+        }
+
+        button:hover {
+            transform: scale(1.08);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        }
+
+        .btn-print {
+            background-image: linear-gradient(45deg, #22c55e, #3b82f6, #22c55e);
+            animation: gradient-shift 3s linear infinite;
+        }
+
+        .btn-clear {
+            background-image: linear-gradient(45deg, #ef4444, #f97316, #ef4444);
+            animation: gradient-shift 3s linear infinite;
+        }
+
+        .btn-save {
+            background-image: linear-gradient(45deg, #10b981, #059669, #10b981);
+            animation: gradient-shift 3s linear infinite;
+        }
+
+        /* نافذة الرسائل (Modal) بديل الـ Alert */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+        .modal-box {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            max-width: 400px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            font-size: 20px;
+            font-weight: bold;
+            color: #0369a1;
+        }
+        .modal-btn {
+            margin-top: 20px;
+            background: #0ea5e9;
+            padding: 8px 20px;
+            font-size: 16px;
+        }
+
+        @keyframes gradient-shift {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 200% 50%; }
+        }
+
+        /* توافق الشاشات وطباعة */
+        @media print {
+            body { background: white; padding-bottom: 0; }
+            .container { box-shadow: none; border: none; margin: 0; width: 100%; }
+            .actions { display: none; }
+            input[type="number"] { border: none; background: transparent; padding: 0; font-size: 16px; }
+            th { background-color: #e2e8f0; color: black; border-color: #000; }
+            th, td { border: 1px solid #000; padding: 8px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="official-header">
+            <img src="01.png" alt="شعار 1" class="logo" onerror="this.style.display='none'">
+            <div class="header-text">
+                <h3>مديرية التربية والتعليم بكفر الشيخ</h3>
+                <h3>إدارة شرق كفر الشيخ التعليمية</h3>
+            </div>
+            <img src="02.png" alt="شعار 2" class="logo" onerror="this.style.display='none'">
+        </div>
+
+        <h1>جدول حصر الكوادر الحاصلة على الدراسات العليا</h1>
+        
+        <div class="school-selector">
+            <label for="schoolName">اسم المدرسة / الجهة:</label>
+            <input list="schoolsList" id="schoolName" placeholder="اكتب للبحث أو اختر اسم المدرسة من القائمة..." autocomplete="off">
+            <datalist id="schoolsList">
+                <!-- سيتم إضافة المدارس عبر الجافاسكريبت -->
+            </datalist>
+        </div>
+
+        <div style="overflow-x: auto;">
+            <table id="surveyTable">
+                <thead>
+                    <tr>
+                        <th rowspan="2" style="width: 10%;">الفئة الوظيفية</th>
+                        <th rowspan="2" style="width: 10%;">المرحلة التعليمية</th>
+                        <th colspan="5">نوع الدراسة</th>
+                        <th rowspan="2" style="width: 12%;">إجمالي الحاصلين على الدراسات العليا</th>
+                        <th rowspan="2" style="width: 12%;">إجمالي عدد الموظفين بالفئة (كلي)</th>
+                        <th rowspan="2" style="width: 10%;">نسبة الحاصلين على دراسات عليا (%)</th>
+                    </tr>
+                    <tr>
+                        <th>دبلوم تربوي</th>
+                        <th>دبلوم مهني</th>
+                        <th>دبلوم خاص</th>
+                        <th>ماجستير</th>
+                        <th>دكتوراه</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- سيتم توليد الصفوف عبر JavaScript لسهولة التحكم -->
+                </tbody>
+                <tfoot>
+                    <tr class="total-row">
+                        <td colspan="2">إجمالي عام</td>
+                        <td id="tot-1">0</td>
+                        <td id="tot-2">0</td>
+                        <td id="tot-3">0</td>
+                        <td id="tot-4">0</td>
+                        <td id="tot-5">0</td>
+                        <td id="tot-postgrad">0</td>
+                        <td id="tot-emp">0</td>
+                        <td id="tot-perc">0%</td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
+        <div class="signatures">
+            <div>يعتمد ،،، مدير المدرسة</div>
+            <div>مدير ادارة التدريب</div>
+        </div>
+
+        <div class="actions">
+            <button class="btn-save" onclick="saveData()">
+                💾 حفظ في شيت جوجل
+            </button>
+            <button class="btn-print" onclick="window.print()">
+                🖨️ طباعة أو حفظ PDF
+            </button>
+            <button class="btn-clear" onclick="clearForm()">
+                🗑️ تفريغ البيانات
+            </button>
+        </div>
+    </div>
+
+    <!-- نافذة الرسائل المنبثقة -->
+    <div class="modal-overlay" id="customModal">
+        <div class="modal-box">
+            <div id="modalMessage">رسالة</div>
+            <button class="modal-btn" id="modalCloseBtn" onclick="closeModal()">موافق</button>
+        </div>
+    </div>
+
+    <script>
+        // بيانات الصفوف المستهدفة بالحصر
+        const rowsData = [
+            { cat: "معلم", stage: "رياض أطفال" },
+            { cat: "معلم", stage: "إبتدائي" },
+            { cat: "معلم", stage: "إعدادي" },
+            { cat: "معلم", stage: "ثانوي" },
+            { cat: "أخصائي", stage: "كافة المراحل" },
+            { cat: "موجه", stage: "كافة المراحل" },
+            { cat: "وكيل مدرسة", stage: "كافة المراحل" },
+            { cat: "مدير مدرسة", stage: "كافة المراحل" }
+        ];
+
+        // قائمة المدارس المستخرجة من الصورة
+        const schoolsData = [
+            "ابراهيم الشناوي الرويني الثانوية بنات", "ابو تمادة الابتدائية الجديدة", "ابو طبل ب تعليم اساسي", 
+            "ابو عمر الابتدائية", "ابوتمادة الابتدائية", "ابوعمرع تعليم اساسي", "ادريجة تعليم اساسى", 
+            "ادريجة ع للتعليم الاساسى", "اسكندر ب", "الاتحاد الابتدائية", "الاتحاد الاعدادية المشتركة", 
+            "الامل للصم الاعدادى المهنى", "الامل للصم ب", "الامل للصم ث", "التجريبية للمعلمات ب", 
+            "التربية الفكرية ب", "التربية الفكرية ع", "الحديثة الابتدائية تعليم أساسي", 
+            "الحديثة الاعدادية تعليم أساسي", "الحمراوى النموذجية", "الحمراوى ع بنات تعليم اساسى", 
+            "الحمراوى للتعليم الاساسى ب", "الخضيرى الابتدائية ت.أ", "الخضيري ع تعليم اساسي", 
+            "الدماطية تعليم اساسى", "الدماطيه الاعدادية المشتركة", "الروضة الخليلة تعليم اساسى", 
+            "الروضة ع للتعليم الاساسى", "الزهراء الابتدائية", "الزهور التجريبية الابتدائية لغات", 
+            "الزهورالرسميه للغات الاعدادية", "السعدى ب للتعليم الاساسى", "السعدي ع تعليم أساسي", 
+            "السعيدية ع بنات الجديدة", "السعيدية ع بنات القديمة", "السلام الابتدائية المشتركة", 
+            "السيوفي الابتدائيه للتعليم الاساسي", "السيوفي الاعداديه المشتركه", "الشمارقة الاعدادية", 
+            "الشهيد ابراهيم ابراهيم شمس الدين ب - شنو", "الشهيد احمد فتحي عدوي الابتدائية", 
+            "الشهيد احمدالسيد محمد السيد", "الشهيد احمدالسيد محمدالسيد", "الشهيد جميل محمدمحمود العرابي", 
+            "الشهيد حمدى ابراهيم ع بنين", "الشهيد عبد المنعم رياض", "الشهيد عبد المنعم رياض - خدمات", 
+            "الشهيد عزت الشافعى الثانوية", "الشهيد عطية العافى ب بالشمارقة", 
+            "الشهيد محمد الشحات نصر غازى الابتدائية", "الشهيد محمد قاسم عبدالوهاب الاعداديه - ابوطبل", 
+            "الشهيد محمدابراهيم ابوالمجد", "الشهيد محمدعبدالحميدفؤاد", 
+            "الشهيد محمود أحمد قحوف الأعدادية بمتبول", "الشهيد مصطفى سمير بدوى الرسمية للغات", 
+            "الشهيد مصطفى سمير بدوى الرسميه للغات الثانوية", "الشهيد مصطفى هلال بالحمراوى", 
+            "الشهيد نبيل fراج الاعداديه المهنيه للبنات", "الشهيد نجيب محى الشناوى ب", 
+            "الشهيد نجيب محى الشناوى ع", "الشهيد هشام بركات الثانوية", 
+            "الشهيد هشام بركات الثانوية للبنات - خدمات", "الشهيداحمدالديهي - الثانوية فصول ملحقة", 
+            "الشهيداحمدسعد الدين الديهي الاعداديه بشنو", "الشهيدعبداللاه عبدالنبي ابوزيد", 
+            "الطايفة الابتدائية", "الطايفة الاعدادية المشتركة", "الطفل المتطور", "العونة الابتدائية", 
+            "العونة الاعدادية", "القرضا الابتدائية", "القرضا الاعدادية", "القرضا الرسمية الدولية", 
+            "القنطرة البيضاء الابتدائية", "القنطرة الجديدة الابتدائية", "المتفوقين للعلوم والتكنولوجيا", 
+            "المرابعين الابتدائية تعليم أساسي", "المرابعين الثانوية", "المرابعين ع للتعليم الاساسى", 
+            "المعلم ابراهيم الاعداديه", "المعمارية الزخرفية العسكرية - خدمات", 
+            "المنتزة الرسمية للغات ابتدائى", "المنتزة تعليم اساسى الاعدادية", 
+            "المنتزه الابتدائية تعليم أساسي", "النور للمكفوفين ب", "النور للمكفوفين ث", 
+            "النور للمكفوفين ع", "الوحدة العربية ب", "بطيطة الابتدائية", "بطيطه الاعداديه المشـتركه", 
+            "بطيطه الثانوية المشتركة", "جمال عبد الناصر الابتدائية", "حبيب عثمان تعليم اساسى ب", 
+            "حبيب عثمان ع تعليم اساسى", "حسن كلبوش الثانوية", "حسني محمد زهرة الأعدادية بنين بالحمراوي", 
+            "حليس تعليم اساسى ب", "حليس ع للتعليم الاساسى", "دفرية الابتدائية", 
+            "دفرية الابتدائية الجديدة", "دفريه الاعداديه المشتركه", "دقلت الابتدائية", "دقلت الاعدادية", 
+            "رزقة أماى الاعداديه المشتركة", "رزقة اماى ب", "زراعة ميت علوان الثانويه", 
+            "زراعة ميت علوان ب تعليم اساسى", "زراعة ميت علوان ع ت.أ", "سخا الابتدائية", 
+            "سخا الابتدائيه الجديده", "سخا الاعدادية بنين", "سخا الثانويه بنات", "سخا تعليم اساسى ب", 
+            "سخا ع بنات تعليم أساسي", "سيدى جمال الابتدائية", "شنو الابتدائية القديمة", 
+            "شهيد السلام الثانوية", "عبد الله السيد ب", "عبد الله النحاس الإبتدائية", 
+            "عبدالله السيد تعليم اساسي ع", "عزبة خميس الابتدائية", "عزبة سـلام الاعدادية المشتركة", 
+            "عزبة سلام ب تعليم اساسى", "على عبد الشكور الاعدادية للغات", "على عبد الشكور الثانوية للغات", 
+            "على عبد الشكور الرسمية للغات الثانوية", "علي عبد الشكور ب تعليم أساسي", 
+            "على عبد الشكور ع بنين ت.أ", "على عبدالشكور الإبتدائية لغات", "قراجة ب للتعليم الاساسى", 
+            "قراجه ع للتعليم الاساسى", "كفر الشيخ التجارية بنات", "كفر الشيخ التجارية بنين", 
+            "كفر الشيخ الثانوية الزراعية", "كفر الشيخ الصناعية بنات", "كفر الشيخ المعمارية الزخرفية", 
+            "كفر الشيخ ع بنات القديمة", "كفر دفرية ب", "كفر دفريه ع ت.أ", "كفر عسكر الابتدائية المشتركة", 
+            "كفرالشيخ الثانوية الزراعية - خدمات", "كفرالشيخ الثانوية الصناعية بنات - خدمات", 
+            "كفرالشيخ الصناعية بنات مهني", "كفرالشيخ ث الزراعية المهنيه", "كفرالشيخ ث المعماريه المهنيه", 
+            "كفرالطايفة الابتدائية", "كفرالطايفه الاعداديه المشتركه", "كفرالمرابعين ب تعليم اساسى", 
+            "كفرالمرابعين ع للتعليم الاساسى", "مجمع أريمون التعليمي ( اعدادى )", 
+            "مجمع أريمون التعليمي ( ثانوى )", "مجمع أريمون التعليمى (ابتدائي)", 
+            "محمود السيد شحاتة الابتدائية ت . أ", "محمود السيد شحاتة الاعدادية ت . أ", 
+            "مدرسة حسن كلبوش الثانوية - خدمات", "مسير الاعداديه بنين", "مسير الجديدة ب", 
+            "ميزار تعليم اساسى ب", "ميزار ع للتعليم الاساسى", "نصرة تعليم أساسى ب", 
+            "نصره ع للتعليم الاساسى", "وحدة مسير ب ت.أ", "وحدة مسير ع للتعليم الاساسى"
+        ];
+
+        const tbody = document.querySelector("#surveyTable tbody");
+
+        // دالة إنشاء الصفوف
+        function buildTable() {
+            // تعبئة قائمة المدارس
+            const datalist = document.getElementById('schoolsList');
+            schoolsData.forEach(school => {
+                const option = document.createElement('option');
+                option.value = school;
+                datalist.appendChild(option);
+            });
+
+            rowsData.forEach((row, index) => {
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                    <td>${row.cat}</td>
+                    <td>${row.stage}</td>
+                    <td><input type="number" min="0" class="data-input col-1" oninput="calculate()"></td>
+                    <td><input type="number" min="0" class="data-input col-2" oninput="calculate()"></td>
+                    <td><input type="number" min="0" class="data-input col-3" oninput="calculate()"></td>
+                    <td><input type="number" min="0" class="data-input col-4" oninput="calculate()"></td>
+                    <td><input type="number" min="0" class="data-input col-5" oninput="calculate()"></td>
+                    <td class="row-postgrad" style="font-weight: bold; color: #0369a1; font-size: 20px;">0</td>
+                    <td><input type="number" min="0" class="total-emp" oninput="calculate()"></td>
+                    <td class="row-perc" style="font-weight: bold; color: #15803d; font-size: 20px;">0%</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // دالة الحسابات الديناميكية
+        function calculate() {
+            const rows = document.querySelectorAll("#surveyTable tbody tr");
+            let grandTotals = [0, 0, 0, 0, 0];
+            let grandTotalPostgrad = 0;
+            let grandTotalEmp = 0;
+
+            rows.forEach(tr => {
+                let rowPostgradTotal = 0;
+                // حساب الدراسات لكل صف
+                for (let i = 1; i <= 5; i++) {
+                    const val = parseInt(tr.querySelector(`.col-${i}`).value) || 0;
+                    rowPostgradTotal += val;
+                    grandTotals[i-1] += val;
+                }
+                
+                // تحديث إجمالي الحاصلين بالصف
+                tr.querySelector('.row-postgrad').innerText = rowPostgradTotal;
+                grandTotalPostgrad += rowPostgradTotal;
+
+                // حساب النسبة المئوية
+                const empTotal = parseInt(tr.querySelector('.total-emp').value) || 0;
+                grandTotalEmp += empTotal;
+                
+                let perc = 0;
+                if (empTotal > 0) {
+                    perc = ((rowPostgradTotal / empTotal) * 100).toFixed(1);
+                }
+                tr.querySelector('.row-perc').innerText = perc + '%';
+            });
+
+            // تحديث الإجمالي العام أسفل الجدول
+            for (let i = 1; i <= 5; i++) {
+                document.getElementById(`tot-${i}`).innerText = grandTotals[i-1];
+            }
+            document.getElementById('tot-postgrad').innerText = grandTotalPostgrad;
+            document.getElementById('tot-emp').innerText = grandTotalEmp;
+            
+            let grandPerc = 0;
+            if (grandTotalEmp > 0) {
+                grandPerc = ((grandTotalPostgrad / grandTotalEmp) * 100).toFixed(1);
+            }
+            document.getElementById('tot-perc').innerText = grandPerc + '%';
+        }
+
+        // دالة تفريغ الحقول
+        function clearForm() {
+            showModal("هل أنت متأكد من تفريغ كافة البيانات؟", true);
+            document.getElementById('modalCloseBtn').onclick = function() {
+                document.getElementById('schoolName').value = "";
+                document.querySelectorAll('input[type="number"]').forEach(input => input.value = "");
+                calculate(); // لإعادة تصفير النتائج
+                closeModal();
+            };
+        }
+
+        // --- دوال نافذة الرسائل ---
+        function showModal(msg, isConfirm = false) {
+            document.getElementById('modalMessage').innerText = msg;
+            document.getElementById('customModal').style.display = 'flex';
+            document.getElementById('modalCloseBtn').style.display = isConfirm ? 'inline-flex' : 'inline-flex';
+            if(!isConfirm) {
+                document.getElementById('modalCloseBtn').onclick = closeModal;
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('customModal').style.display = 'none';
+        }
+
+        // --- دالة الحفظ في شيت جوجل ---
+        // تم ربط الرابط بنجاح
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx0r2w4MSn1KX63rbYnACCFZVTLufhAIIXb3tPQkkt-LO0g1dO3CeaytfZo6beZaiYi/exec";
+
+        async function saveData() {
+            const schoolName = document.getElementById('schoolName').value.trim();
+            if(!schoolName) {
+                showModal("يرجى اختيار أو كتابة اسم المدرسة / الجهة أولاً.");
+                return;
+            }
+
+            // تجميع البيانات
+            const rows = document.querySelectorAll("#surveyTable tbody tr");
+            let dataPayload = [];
+
+            rows.forEach(tr => {
+                let rowData = {
+                    school: schoolName,
+                    category: tr.cells[0].innerText,
+                    stage: tr.cells[1].innerText,
+                    dip_tarbawy: tr.querySelector('.col-1').value || 0,
+                    dip_mehny: tr.querySelector('.col-2').value || 0,
+                    dip_khas: tr.querySelector('.col-3').value || 0,
+                    magister: tr.querySelector('.col-4').value || 0,
+                    doctorate: tr.querySelector('.col-5').value || 0,
+                    total_postgrad: tr.querySelector('.row-postgrad').innerText,
+                    total_emp: tr.querySelector('.total-emp').value || 0,
+                    percentage: tr.querySelector('.row-perc').innerText
+                };
+                dataPayload.push(rowData);
+            });
+
+            document.getElementById('modalCloseBtn').style.display = 'none';
+            showModal("⏳ جاري إرسال البيانات لشيت جوجل...");
+
+            try {
+                const response = await fetch(GOOGLE_SCRIPT_URL, {
+                    method: "POST",
+                    body: JSON.stringify(dataPayload)
+                });
+                
+                showModal("✅ تم حفظ البيانات في شيت جوجل بنجاح!");
+            } catch (error) {
+                console.error(error);
+                showModal("❌ حدث خطأ! تأكد من وضع رابط سكريبت جوجل الصحيح في الكود، وتأكد من اتصالك بالإنترنت.");
+            }
+        }
+
+        // تشغيل بناء الجدول عند تحميل الصفحة
+        window.onload = buildTable;
+    </script>
+</body>
+</html>
